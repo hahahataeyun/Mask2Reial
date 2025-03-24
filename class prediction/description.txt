@@ -1,0 +1,2 @@
+Linear Contrast Projection
+    Projects 3 dimensional input images into 2 dimension.
