@@ -1,2 +1,18 @@
-Linear Contrast Projection
-    Projects 3 dimensional input images into 2 dimension.
+Class prediction model has the following structure:
+    1. Linear Contrast Projection
+        Linear projection means that assigning each pixel a contrast value, which is defined by 
+        [(R,G,B)_pixel - (R,G,B)_background] / (R,G,B)_background. Contrast value is calculated independently over RGB channels.
+    2. Instance Masking
+        For pixels which are not classified as background, predicted masks from the Mask2Former are masked onto the pixels.
+    3. Projection into embedding space
+        Train a Spectral Normalized ResNet which maps each pixel's projected contrast values into embedding dimensions. 
+        The mapping onto embedding dimension is desired to be well-distingusihed by layer thicknesses, which can be trained via Softmax Supervision.
+    4. (for inference) Gaussian Discriminant Analysis
+        During inference, assuming that the ResNet with SN has learnt how to properly output embedding representations,
+        we can readily apply GDA to determine the probability of any contrast belongs to a given layer thickness.
+
+** Things need to be revised
+    1. ResNet should be revised to match the desired input dimension (currently it can only accommodate 28x28x1 or 32x32x3)
+    2. In instance masking, now I just concatenated the class information onto the raw image, so that concatenated one has the form of  (H,W,4)
+       maybe there would be a better way to do this.
+    3.  
