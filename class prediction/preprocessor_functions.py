@@ -10,13 +10,13 @@ def get_contrasts_from_dir(image_directory):
     background_color = None
 
     for filename in os.listdir(image_directory):
-        if filename.endswith(('.png', '.jpg', '.jpeg')):
+        if filename.endswith((".png", ".jpg", ".jpeg")):
             image_path = os.path.join(image_directory, filename)
             image = cv2.imread(image_path)
-            
+
             if background_color is None:
                 background_color = calculate_background_color(image)
-            
+
             contrast_image = (image - background_color) / background_color
             contrasts.append(contrast_image)
 
@@ -82,11 +82,10 @@ def instance_masking(projected_images, maskformer_output):
     masked_images = []
 
     # pred_mask_list is a list of mask predictions(KxHxW) for each image
-    pred_masks_list = [output['sem_seg'] for output in maskformer_output]
-
+    pred_masks_list = [output["sem_seg"] for output in maskformer_output]
 
     for image, pred_mask in zip(projected_images, pred_masks_list):
-        # Get the most probable class for each pixel    
+        # Get the most probable class for each pixel
         most_probable_class = np.argmax(pred_mask, axis=0)
         # most_probable_class has shape (H, W) and contains the index of the most probable class for each pixel
 
@@ -95,13 +94,12 @@ def instance_masking(projected_images, maskformer_output):
         # Adds a new dimension (axis=2), transforming the shape from (H, W) to (H, W, 1)
 
         # Concatenate the image with the most probable class
-        concatenated_image = np.concatenate((image, most_probable_class_expanded), axis=2)
+        concatenated_image = np.concatenate(
+            (image, most_probable_class_expanded), axis=2
+        )
         # Concatenate along the channel axis (axis=2) to create a new image with shape (H, W, 4)
 
         masked_images.append(concatenated_image)
 
     return masked_images
-
-
-
 
